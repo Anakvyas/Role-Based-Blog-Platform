@@ -15,7 +15,7 @@ import AppError from './utils/AppError.js';
 
 const app = express();
 const allowedOrigins = [
-    process.env.FRONTEND_URL || 'https://role-based-blog-platform-c36e.vercel.app',
+    (process.env.FRONTEND_URL || 'https://role-based-blog-platform-c36e.vercel.app').replace(/\/$/, ''),
     'http://localhost:5173',
 ];
 
@@ -26,14 +26,8 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('combined', { stream: accessLogStream }));
 app.use(cors({
-    origin(origin, callback) {
-        if (!origin || allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        }
-
-        return callback(new AppError('CORS policy does not allow this origin', 403));
-    },
-    credentials:true,
+    origin: allowedOrigins,
+    credentials: true,
 }));
 
 // routes
