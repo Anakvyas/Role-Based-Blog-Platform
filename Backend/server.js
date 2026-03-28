@@ -14,6 +14,10 @@ import errorHandler from './middlewares/errorHandler.js';
 import AppError from './utils/AppError.js';
 
 const app = express();
+const allowedOrigins = [
+    process.env.FRONTEND_URL || 'https://role-based-blog-platform-c36e.vercel.app',
+    'http://localhost:5173',
+];
 
 // db connection
 await connectDB();
@@ -22,7 +26,13 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(morgan('combined', { stream: accessLogStream }));
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+    origin(origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+
+        return callback(new AppError('CORS policy does not allow this origin', 403));
+    },
     credentials:true,
 }));
 

@@ -4,6 +4,13 @@ import { generatetoken } from "../utils/generatetoken.js";
 import AppError from "../utils/AppError.js";
 import asyncHandler from "../utils/asyncHandler.js";
 
+const isProduction = process.env.NODE_ENV === 'production';
+const cookieOptions = {
+    httpOnly: true,
+    sameSite: isProduction ? 'none' : 'lax',
+    secure: isProduction,
+};
+
 export const Signup = asyncHandler(async (req,res)=>{
     const {username,email,password} = req.body;
     const role = 'user';
@@ -42,10 +49,7 @@ export const Login = asyncHandler(async (req,res)=>{
     }
 
     const token = generatetoken(user);
-    res.cookie("token",token,{
-        httpOnly:true,
-        sameSite:'lax',
-    });
+    res.cookie("token",token,cookieOptions);
 
     return res.status(200).json({
         success:true,
@@ -61,8 +65,7 @@ export const Logout = asyncHandler(async (req,res)=>{
     }
 
     res.cookie('token',"",{
-        httpOnly:true,
-        sameSite:'lax',
+        ...cookieOptions,
         expires:new Date(0)
     });
 
