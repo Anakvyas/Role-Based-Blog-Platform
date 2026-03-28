@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const logsDirectory = path.resolve('Backend', 'logs');
+const logsDirectory = path.resolve(process.cwd(), 'logs');
 
 if (!fs.existsSync(logsDirectory)) {
     fs.mkdirSync(logsDirectory, { recursive: true });
