@@ -1,10 +1,5 @@
-const DEPLOYED_API_URL = 'https://role-based-blog-platform-production.up.railway.app/api/v1';
-const API_BASE = import.meta.env.DEV
-  ? '/api/v1'
-  : (import.meta.env.VITE_API_URL || DEPLOYED_API_URL);
-
 export const apiFetch = async (endpoint, options = {}) => {
-  const response = await fetch(`${API_BASE}${endpoint}`, {
+  const response = await fetch(`/api/v1${endpoint}`, {
     credentials: 'include',
     headers: {
       'Content-Type': 'application/json',

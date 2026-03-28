@@ -7,7 +7,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://role-based-blog-platform-production.up.railway.app/',
+        target: 'http://localhost:3000',
         changeOrigin: true,
       },
     },
