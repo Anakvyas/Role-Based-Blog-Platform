@@ -1,5 +1,6 @@
 import User from "../models/user.js";
 import bcrypt from 'bcrypt';
+import { generatetoken } from "../utils/generatetoken.js";
 
 export const Signup = async(req,res)=>{
     try{
@@ -66,10 +67,15 @@ export const Login = async(req,res)=>{
                 message:'wrong password'
             })
         }
+        const token = generatetoken(user);
+        res.cookie("token",token,{
+            httpOnly:true,
+        });
 
         return res.status(200).json({
                 success:message,
-                message:"login successful.."
+                message:"login successful..",
+                token:token
         })
     }catch(err){
         console.log("error occured - "+err.message);
@@ -80,7 +86,23 @@ export const Login = async(req,res)=>{
     }
 }
 
+export const Logout = ()=>{
+    try{
+        const token = req.cookie.token;
+        if(!token){
+            return res.status(401).json({ message: "Not logged in" });
+        }
 
-// export const Logout = ()=>{
-
-// }
+        res.cookie('token',"",{
+            httpOnly:true,
+            expires:new Date(0)
+        })
+        res.status(200).json({ message: "Logged out successfully" });
+    }catch(err){
+        console.log("error occured - "+err.message);
+        return res.status(500).json({
+            sucsess:false,
+            message:'Internal Server Erorr'
+        })
+    }
+}
